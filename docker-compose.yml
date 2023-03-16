@@ -1,0 +1,18 @@
+---
+services:
+  kubeget:
+    container_name: kubeget 
+    build:
+      context: .
+      tags:
+        - "kubeget:latest"
+        - "kubeget:${VERSION}"
+      dockerfile: kubeget.Dockerfile
+      labels:
+        com.kubeget.description: "${DESCRIPTION}"
+        com.kubeget.version: "${VERSION}"
+      pull: true
+    stdin_open: true
+    tty: true
+    env_file:
+      - app.env
