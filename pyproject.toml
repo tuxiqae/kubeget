@@ -1,0 +1,38 @@
+[project]
+name = "kubeget"
+version = "0.2.0"
+description = "A cool CLI utility that lists pods using K8s API"
+authors = [
+    {name = "Sagi Sarussi", email = "me@sagis.dev"},
+]
+dependencies = [
+    "requests>=2.28.2",
+    "structlog>=22.3.0",
+    "kubernetes>=26.1.0",
+    "PrettyTable>=3.6.0",
+    "click>=8.1.3",
+]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[tool.pdm.build]
+includes = [
+  "src/kubeget",
+  "src/kubeget/*.py",
+  "src/kubeget/utils/*.py"
+]
+package-dir = "src"
+
+[project.scripts]
+kubeget = "kubeget.main:main"
+
+[tool.pdm.scripts]
+start = "python3 -m src.kubeget.main"
+
+[project.urls]
+"Homepage" = "https://github.com/tuxiqae/kubeget"
+"Bug Tracker" = "https://github.com/tuxiqae/kubeget/issues"
