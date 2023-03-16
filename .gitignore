@@ -132,3 +132,7 @@ temp.py
 
 # Pyannotate generated stubs
 type_info.json
+
+# GIFs
+*.gif
+
