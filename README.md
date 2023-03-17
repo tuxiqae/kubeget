@@ -4,7 +4,7 @@
 Lists pods for the configured Kubernetes cluster
 
 ## Installation
-- Use [PDM](https://github.com/pdm-project/pdm) or any other Python package manager to install the package
+- Use [Poetry](https://python-poetry.org/) or any other Python package manager to install the package
 
 - Use [Nix Flakes](https://nixos.wiki/wiki/Flakes) to build:
 ```shell
@@ -19,7 +19,7 @@ Lists pods for the configured Kubernetes cluster
 ⤅ docker container run -it --rm kubeget:0.2.0 # Spin-up a Docker container using the previously built OCI image
 ```
 ```shell
-# Install the package
+# Build the package locally
 ⤅ nix build ".#app"
 ⤅ ./result/bin/kubeget
 ```
