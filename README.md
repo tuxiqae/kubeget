@@ -4,12 +4,25 @@
 Lists pods for the configured Kubernetes cluster
 
 ## Installation
-Use [PDM](https://github.com/pdm-project/pdm) or any other Python package manager to install the package
+- Use [PDM](https://github.com/pdm-project/pdm) or any other Python package manager to install the package
 
-You could also roll-up a Docker container which contains `kubeget`, and `kubectl` using the following command:
-`
-⤅ docker compose -f docker-compose.yml --env-file app.env run --build kubeget
-`
+- Use [Nix Flakes](https://nixos.wiki/wiki/Flakes) to build:
+```shell
+# The easiest -- running a Nix Development shell
+⤅ nix develop
+⤅ which kubeget # /nix/store/z3w2pqdc9yviji4lkai2zhq8ycnavbzk-python3-3.10.10-env/bin/kubeget
+⤅ kubeget
+```
+```shell
+# Containerized
+⤅ nix build && docker image load --input result # In order to build the OCI image`
+⤅ docker container run -it --rm kubeget:0.2.0 # Spin-up a Docker container using the previously built OCI image
+```
+```shell
+# Install the package
+⤅ nix build ".#app"
+⤅ ./result/bin/kubeget
+```
 
 ## Usage
 
