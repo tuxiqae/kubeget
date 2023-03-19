@@ -4,14 +4,17 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    nix2container.url = "github:nlewo/nix2container";
   };
   outputs = {
     self,
     nixpkgs,
     flake-utils,
+    nix2container,
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
+      nix2containerPkgs = nix2container.packages.x86_64-linux;
       poetry_env = pkgs.poetry2nix.mkPoetryEnv {
         projectDir = ./.;
         preferWheels = true;
@@ -22,35 +25,42 @@
         preferWheels = true;
         python = pkgs.python310;
       };
-      ociImage = pkgs.dockerTools.buildLayeredImage {
+      kubegetOci = nix2containerPkgs.nix2container.buildImage {
         name = "kubeget";
         tag = "0.2.0";
-        contents = [
-          app.dependencyEnv
+        config = {
+          cmd = ["${app}/bin/kubeget"];
+        };
+        copyToRoot = [
+          (pkgs.buildEnv {
+            name = "root";
+            paths = [app];
+            pathsToLink = ["/bin"];
+          })
         ];
-        config.Cmd = ["kubeget"];
         maxLayers = 120;
-        created = "now";
       };
-      devOciImage = pkgs.dockerTools.buildLayeredImage {
+      kubeget-devOci = nix2containerPkgs.nix2container.buildImage {
         name = "kubeget-dev";
         tag = "0.2.0";
-        fromImage = ociImage;
-        contents = [
-          pkgs.awscli2
-          pkgs.bashInteractive
-          pkgs.busybox
-          pkgs.kubectl
+        fromImage = kubegetOci;
+        config = {
+          cmd = ["/bin/bash"];
+        };
+        copyToRoot = [
+          (pkgs.buildEnv {
+            name = "root";
+            paths = [app pkgs.bashInteractive pkgs.coreutils pkgs.awscli2 pkgs.kubectl];
+            pathsToLink = ["/bin"];
+          })
         ];
-        config.Cmd = ["/bin/bash"];
         maxLayers = 120;
-        created = "now";
       };
     in {
       packages = {
-        default = ociImage;
-        image = ociImage;
-        dev-image = devOciImage;
+        default = kubegetOci;
+        image = kubegetOci;
+        dev-image = kubeget-devOci;
         app = app;
         poetry_env = poetry_env;
       };
