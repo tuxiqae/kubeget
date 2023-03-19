@@ -9,18 +9,19 @@ Lists pods for the configured Kubernetes cluster
 - Use [Nix Flakes](https://nixos.wiki/wiki/Flakes) to build:
 ```shell
 # The easiest -- running a Nix Development shell
-⤅ nix develop
+⤅ nix develop 'github:tuxiqae/kubeget/feature/nix'
 ⤅ which kubeget # /nix/store/z3w2pqdc9yviji4lkai2zhq8ycnavbzk-python3-3.10.10-env/bin/kubeget
 ⤅ kubeget
 ```
 ```shell
 # Containerized
-⤅ nix build && docker image load --input result # In order to build the OCI image`
+⤅ nix build 'github:tuxiqae/kubeget/feature/nix#image'
+⤅ docker image load --input result # In order to build the OCI image`
 ⤅ docker container run -it --rm kubeget:0.2.0 # Spin-up a Docker container using the previously built OCI image
 ```
 ```shell
 # Build the package locally
-⤅ nix build ".#app"
+⤅ nix build "github:tuxiqae/kubeget/feature/nix#app"
 ⤅ ./result/bin/kubeget
 ```
 

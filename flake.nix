@@ -27,20 +27,30 @@
         tag = "0.2.0";
         contents = [
           app.dependencyEnv
+        ];
+        config.Cmd = ["kubeget"];
+        maxLayers = 120;
+        created = "now";
+      };
+      devOciImage = pkgs.dockerTools.buildLayeredImage {
+        name = "kubeget-dev";
+        tag = "0.2.0";
+        fromImage = ociImage;
+        contents = [
           pkgs.awscli2
-          pkgs.bash
+          pkgs.bashInteractive
           pkgs.busybox
           pkgs.kubectl
         ];
         config.Cmd = ["/bin/bash"];
         maxLayers = 120;
         created = "now";
-        # copyToRoot = [ pkgs.dockerTools.usrBinEnv pkgs.dockerTools.binSh ];
       };
     in {
       packages = {
         default = ociImage;
         image = ociImage;
+        dev-image = devOciImage;
         app = app;
         poetry_env = poetry_env;
       };
